@@ -134,7 +134,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <div className={`sidebar ${isSidebarOpen ? 'open' : ''}`} style={{ width: '250px', backgroundColor: theme.sidebarBg, color: theme.white, position: 'fixed', height: '100vh', zIndex: 1000, transition: 'transform 0.3s ease' }}>
                   <div style={{ padding: '30px 24px' }}><h2 style={{ margin: 0, fontSize: '22px' }}>CHOPSTI<span style={{color: theme.primaryRed}}>X</span></h2></div>
                   <nav style={{ padding: '15px 0' }}>
-                    {[{ name: 'Dashboard', path: '/', icon: faHome }, { name: 'AI Reviews', path: '/feedback', icon: faRobot }, { name: 'Training', path: '/training', icon: faGraduationCap }, { name: 'Wastage Log', path: '/waste', icon: faTrash }].map((item) => (
+                    {[{ name: 'Dashboard', path: '/', icon: faHome }, { name: 'AI Reviews', path: '/feedback', icon: faRobot }, { name: 'Training', path: '/training', icon: faGraduationCap }, { name: 'Wastage Log', path: '/wastage', icon: faTrash }].map((item) => (
                       <a key={item.name} href={item.path} onClick={() => setIsSidebarOpen(false)} style={{ display: 'flex', alignItems: 'center', padding: '14px 24px', textDecoration: 'none', color: pathname === item.path ? theme.white : '#A0AEC0', backgroundColor: pathname === item.path ? theme.primaryRed : 'transparent' }}>
                         <FontAwesomeIcon icon={item.icon} style={{ width: '18px', marginRight: '15px' }} /> {item.name}
                       </a>
