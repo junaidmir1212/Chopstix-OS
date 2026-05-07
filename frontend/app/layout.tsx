@@ -17,7 +17,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const [error, setError] = useState("");
   const [isChecking, setIsChecking] = useState(true);
   
-  // Sidebar toggle state for mobile
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const theme = { sidebarBg: '#1A1D23', primaryRed: '#E31837', bgLight: '#F5F6F8', textDark: '#1E232B', textMuted: '#6B7280', white: '#FFFFFF', border: '#E5E7EB', danger: '#EF4444' };
@@ -92,31 +91,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <div style={{ backgroundColor: 'white', padding: '50px 40px', borderRadius: '24px', width: '380px', textAlign: 'center', boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }}>
                   <h2 style={{ fontSize: '32px', fontWeight: '900', margin: '0 0 30px 0', letterSpacing: '-1px' }}>CHOPSTI<span style={{color: theme.primaryRed}}>X</span></h2>
                   <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
-                    <input 
-                      type="text" 
-                      onChange={(e) => setUsernameInput(e.target.value)} 
-                      style={{ width: '100%', padding: '14px', borderRadius: '12px', border: `1px solid ${theme.border}`, marginBottom: '20px', boxSizing: 'border-box' }} 
-                      placeholder="Username" 
-                    />
-                    <input 
-                      type="password" 
-                      onChange={(e) => setPasswordInput(e.target.value)} 
-                      style={{ width: '100%', padding: '14px', borderRadius: '12px', border: `1px solid ${theme.border}`, marginBottom: '20px', boxSizing: 'border-box' }} 
-                      placeholder="Password" 
-                    />
-                    <button 
-                      type="submit" 
-                      style={{ width: '100%', padding: '16px', backgroundColor: theme.primaryRed, color: 'white', border: 'none', borderRadius: '12px', fontWeight: '800', cursor: 'pointer' }}
-                    >
-                      Sign In
-                    </button>
+                    <input type="text" onChange={(e) => setUsernameInput(e.target.value)} style={{ width: '100%', padding: '14px', borderRadius: '12px', border: `1px solid ${theme.border}`, marginBottom: '20px', boxSizing: 'border-box' }} placeholder="Username" />
+                    <input type="password" onChange={(e) => setPasswordInput(e.target.value)} style={{ width: '100%', padding: '14px', borderRadius: '12px', border: `1px solid ${theme.border}`, marginBottom: '20px', boxSizing: 'border-box' }} placeholder="Password" />
+                    <button type="submit" style={{ width: '100%', padding: '16px', backgroundColor: theme.primaryRed, color: 'white', border: 'none', borderRadius: '12px', fontWeight: '800', cursor: 'pointer' }}>Sign In</button>
                     {error && <p style={{color: theme.danger, fontSize: '14px', marginTop: '15px', fontWeight: '600'}}>{error}</p>}
                   </form>
                 </div>
               </div>
             ) : (
               <>
-                {/* 🍔 MOBILE HAMBURGER BUTTON */}
                 <button 
                   onClick={() => setIsSidebarOpen(!isSidebarOpen)}
                   className="mobile-toggle"
@@ -125,27 +108,32 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <FontAwesomeIcon icon={isSidebarOpen ? faTimes : faBars} />
                 </button>
 
-                {/* 🔳 MOBILE OVERLAY */}
                 {isSidebarOpen && (
                   <div onClick={() => setIsSidebarOpen(false)} style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', zIndex: 999, backdropFilter: 'blur(2px)' }} />
                 )}
 
-                {/* 🚪 SIDEBAR */}
-                <div className={`sidebar ${isSidebarOpen ? 'open' : ''}`} style={{ width: '250px', backgroundColor: theme.sidebarBg, color: theme.white, position: 'fixed', height: '100vh', zIndex: 1000, transition: 'transform 0.3s ease' }}>
+                <div className={`sidebar ${isSidebarOpen ? 'open' : ''}`} style={{ width: '250px', backgroundColor: theme.sidebarBg, color: theme.white, position: 'fixed', height: '100vh', zIndex: 1000, transition: 'transform 0.3s ease', overflowY: 'auto' }}>
                   <div style={{ padding: '30px 24px' }}><h2 style={{ margin: 0, fontSize: '22px' }}>CHOPSTI<span style={{color: theme.primaryRed}}>X</span></h2></div>
-                  <nav style={{ padding: '15px 0' }}>
-                    {[{ name: 'Dashboard', path: '/', icon: faHome }, { name: 'AI Reviews', path: '/feedback', icon: faRobot }, { name: 'Training', path: '/training', icon: faGraduationCap }, { name: 'Wastage Log', path: '/wastage', icon: faTrash }].map((item) => (
-                      <a key={item.name} href={item.path} onClick={() => setIsSidebarOpen(false)} style={{ display: 'flex', alignItems: 'center', padding: '14px 24px', textDecoration: 'none', color: pathname === item.path ? theme.white : '#A0AEC0', backgroundColor: pathname === item.path ? theme.primaryRed : 'transparent' }}>
-                        <FontAwesomeIcon icon={item.icon} style={{ width: '18px', marginRight: '15px' }} /> {item.name}
-                      </a>
-                    ))}
+                  
+                  {/* --- LOGOUT MOVED INSIDE THE SCROLLABLE NAV SECTION --- */}
+                  <nav style={{ padding: '15px 0', display: 'flex', flexDirection: 'column', height: 'calc(100% - 100px)' }}>
+                    <div style={{ flex: 1 }}>
+                      {[{ name: 'Dashboard', path: '/', icon: faHome }, { name: 'AI Reviews', path: '/feedback', icon: faRobot }, { name: 'Training', path: '/training', icon: faGraduationCap }, { name: 'Wastage Log', path: '/wastage', icon: faTrash }].map((item) => (
+                        <a key={item.name} href={item.path} onClick={() => setIsSidebarOpen(false)} style={{ display: 'flex', alignItems: 'center', padding: '14px 24px', textDecoration: 'none', color: pathname === item.path ? theme.white : '#A0AEC0', backgroundColor: pathname === item.path ? theme.primaryRed : 'transparent' }}>
+                          <FontAwesomeIcon icon={item.icon} style={{ width: '18px', marginRight: '15px' }} /> {item.name}
+                        </a>
+                      ))}
+                    </div>
+
+                    {/* This Logout button now scrolls with the menu on small phones */}
+                    <div style={{ padding: '20px 0' }}>
+                      <button onClick={handleLogout} style={{ width: '100%', display: 'flex', alignItems: 'center', padding: '14px 24px', background: 'none', border: 'none', color: '#EF4444', cursor: 'pointer', fontSize: '16px', fontWeight: '600' }}>
+                        <FontAwesomeIcon icon={faSignOutAlt} style={{width: '18px', marginRight: '15px'}}/> Log Out
+                      </button>
+                    </div>
                   </nav>
-                  <button onClick={handleLogout} style={{ position: 'absolute', bottom: '20px', left: '24px', background: 'none', border: 'none', color: '#A0AEC0', cursor: 'pointer' }}>
-                    <FontAwesomeIcon icon={faSignOutAlt} style={{marginRight: '10px'}}/> Log Out
-                  </button>
                 </div>
 
-                {/* 🖥️ MAIN CONTENT AREA */}
                 <div className="main-content" style={{ flex: 1, transition: 'margin 0.3s ease' }}>
                   <header style={{ height: '70px', backgroundColor: theme.white, borderBottom: `1px solid ${theme.border}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 40px' }}>
                     <div className="header-branch-title">
