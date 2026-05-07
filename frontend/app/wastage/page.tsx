@@ -7,7 +7,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-export default function WasteLog() {
+export default function WastageLog() {
   const [role, setRole] = useState("");
   const [branch, setBranch] = useState("");
   const theme = { primaryRed: '#E31837', textDark: '#1E232B', textMuted: '#6B7280', border: '#E5E7EB' };
@@ -22,7 +22,7 @@ export default function WasteLog() {
     return () => window.removeEventListener('storage', update);
   }, []);
 
-  const wasteData: Record<string, number> = { 
+  const wastageData: Record<string, number> = { 
     "Oxford Street (London)": 4.2, 
     "Manchester Arndale": 3.8, 
     "Birmingham Bullring": 5.1 
@@ -30,11 +30,11 @@ export default function WasteLog() {
 
   const getStats = () => {
     if (branch === "All Branches (UK)") {
-      const total = Object.values(wasteData).reduce((a, b) => a + b, 0);
+      const total = Object.values(wastageData).reduce((a, b) => a + b, 0);
       return { kg: total.toFixed(1), cost: (total * 12.5).toFixed(2), ai: "UK Regional Wastage is £163.75 today." };
     }
-    const kg = wasteData[branch] || 0;
-    return { kg: kg.toFixed(1), cost: (kg * 12.5).toFixed(2), ai: `${branch}: Waste is within target.` };
+    const kg = wastageData[branch] || 0;
+    return { kg: kg.toFixed(1), cost: (kg * 12.5).toFixed(2), ai: `${branch}: Wastage is within target.` };
   };
 
   const stats = getStats();
@@ -61,7 +61,7 @@ export default function WasteLog() {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '30px' }}>
-        <h1 style={{ fontSize: '24px', fontWeight: '700' }}>Waste Audit: {branch}</h1>
+        <h1 style={{ fontSize: '24px', fontWeight: '700' }}>Wastage Audit: {branch}</h1>
         <div style={{ backgroundColor: '#EEF2FF', padding: '10px 20px', borderRadius: '12px', border: '1px solid #C7D2FE', color: '#4338CA', fontSize: '13px', fontWeight: '700' }}>
           <FontAwesomeIcon icon={faRobot} style={{marginRight: '10px'}} /> AI: {stats.ai}
         </div>
@@ -79,7 +79,7 @@ export default function WasteLog() {
       </div>
 
       <div style={{ height: '350px', backgroundColor: 'white', padding: '30px', borderRadius: '16px', border: `1px solid ${theme.border}` }}>
-        <h3 style={{fontSize: '14px', marginBottom: '20px', color: theme.textMuted}}>Waste Performance Analysis</h3>
+        <h3 style={{fontSize: '14px', marginBottom: '20px', color: theme.textMuted}}>Wastage Performance Analysis</h3>
         <Bar data={getChartData()} options={{ maintainAspectRatio: false, plugins: { legend: { display: false } } }} />
       </div>
     </div>
