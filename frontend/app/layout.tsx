@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHome, faRobot, faGraduationCap, faTrash, faSignOutAlt, faBars, faTimes, faUserCircle } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faRobot, faGraduationCap, faTrash, faSignOutAlt, faBars, faTimes, faUserCircle, faLock, faBuilding, faIdBadge } from '@fortawesome/free-solid-svg-icons';
 import { usePathname, useRouter } from 'next/navigation';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -18,9 +18,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const [isChecking, setIsChecking] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+  
+  // NEW: State for Profile Modal
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  const theme = { sidebarBg: '#1A1D23', primaryRed: '#E31837', bgLight: '#F5F6F8', textDark: '#1E232B', textMuted: '#6B7280', white: '#FFFFFF', border: '#E5E7EB', danger: '#EF4444' };
+  const theme = { sidebarBg: '#1A1D23', primaryRed: '#E31837', bgLight: '#F5F6F8', textDark: '#1E232B', textMuted: '#6B7280', white: '#FFFFFF', border: '#E5E7EB', danger: '#EF4444', success: '#10B981' };
 
   const USERS = [
     { id: "Junaid", pass: "Chopstix2026", name: "Muhammad Junaid Mir", role: "manager", branch: "Oxford Street (London)" },
@@ -73,6 +77,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     setIsLoggedIn(false);
     setIsProfileOpen(false);
     setIsSidebarOpen(false);
+    setShowProfileModal(false);
     router.push("/");
   };
 
@@ -88,12 +93,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {!isChecking && (
           <>
             {!isLoggedIn ? (
-              <div style={{ 
-                width: '100vw', height: '100vh', 
-                backgroundImage: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('/background.png')`,
-                backgroundSize: 'cover', backgroundPosition: 'center',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'fixed', zIndex: 9999 
-              }}>
+              <div style={{ width: '100vw', height: '100vh', backgroundImage: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('/background.png')`, backgroundSize: 'cover', backgroundPosition: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'fixed', zIndex: 9999 }}>
                 <div style={{ backgroundColor: 'white', padding: '50px 40px', borderRadius: '24px', width: '380px', textAlign: 'center', boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }}>
                   <h2 style={{ fontSize: '32px', fontWeight: '900', margin: '0 0 30px 0', letterSpacing: '-1px' }}>CHOPSTI<span style={{color: theme.primaryRed}}>X</span></h2>
                   <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
@@ -106,6 +106,54 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </div>
             ) : (
               <>
+                {/* 1. PROFILE MODAL (Pop-up) */}
+                {showProfileModal && (
+                  <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.7)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 10000, backdropFilter: 'blur(5px)' }}>
+                    <div style={{ backgroundColor: 'white', width: '90%', maxWidth: '450px', borderRadius: '24px', overflow: 'hidden', boxShadow: '0 25px 50px rgba(0,0,0,0.2)' }}>
+                      {/* Modal Header */}
+                      <div style={{ backgroundColor: theme.sidebarBg, padding: '30px', textAlign: 'center', color: 'white', position: 'relative' }}>
+                        <button onClick={() => setShowProfileModal(false)} style={{ position: 'absolute', top: '20px', right: '20px', background: 'none', border: 'none', color: 'white', fontSize: '20px', cursor: 'pointer' }}>
+                          <FontAwesomeIcon icon={faTimes} />
+                        </button>
+                        <div style={{ width: '80px', height: '80px', borderRadius: '50%', backgroundColor: theme.primaryRed, margin: '0 auto 15px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '28px', fontWeight: '800', border: '4px solid rgba(255,255,255,0.1)' }}>
+                          {getInitials(userName)}
+                        </div>
+                        <h3 style={{ margin: 0, fontSize: '20px' }}>{userName}</h3>
+                        <p style={{ margin: '5px 0 0', opacity: 0.7, fontSize: '14px' }}>{userRole === "area_manager" ? "Area Director" : "Branch Manager"}</p>
+                      </div>
+                      
+                      {/* Modal Body */}
+                      <div style={{ padding: '30px' }}>
+                        <div style={{ marginBottom: '25px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginBottom: '15px' }}>
+                            <FontAwesomeIcon icon={faIdBadge} style={{ color: theme.primaryRed, width: '20px' }} />
+                            <div>
+                              <div style={{ fontSize: '12px', fontWeight: '700', color: theme.textMuted }}>POSITION</div>
+                              <div style={{ fontWeight: '600' }}>{userRole === "area_manager" ? "Senior Management" : "Store Operations"}</div>
+                            </div>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                            <FontAwesomeIcon icon={faBuilding} style={{ color: theme.primaryRed, width: '20px' }} />
+                            <div>
+                              <div style={{ fontSize: '12px', fontWeight: '700', color: theme.textMuted }}>ASSIGNED LOCATION</div>
+                              <div style={{ fontWeight: '600' }}>{selectedBranch}</div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Change Password Section */}
+                        <div style={{ borderTop: `1px solid ${theme.border}`, paddingTop: '20px' }}>
+                          <h4 style={{ margin: '0 0 15px 0', fontSize: '15px' }}>Change Password</h4>
+                          <input type="password" placeholder="New Password" style={{ width: '100%', padding: '12px', borderRadius: '10px', border: `1px solid ${theme.border}`, marginBottom: '10px', boxSizing: 'border-box' }} />
+                          <button style={{ width: '100%', padding: '12px', backgroundColor: theme.textDark, color: 'white', border: 'none', borderRadius: '10px', fontWeight: '700', cursor: 'pointer' }}>
+                             Update Password
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="mobile-toggle" style={{ position: 'fixed', top: '15px', left: '15px', zIndex: 1001, backgroundColor: theme.primaryRed, color: 'white', border: 'none', borderRadius: '8px', width: '40px', height: '40px', cursor: 'pointer', display: 'none', alignItems: 'center', justifyContent: 'center' }}>
                   <FontAwesomeIcon icon={isSidebarOpen ? faTimes : faBars} />
                 </button>
@@ -115,12 +163,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <div className={`sidebar ${isSidebarOpen ? 'open' : ''}`} style={{ width: '250px', backgroundColor: theme.sidebarBg, color: theme.white, position: 'fixed', height: '100vh', zIndex: 1000, transition: 'transform 0.3s ease', overflowY: 'auto', display: 'flex', flexDirection: 'column' }}>
                   <div style={{ padding: '30px 24px' }}><h2 style={{ margin: 0, fontSize: '22px' }}>CHOPSTI<span style={{color: theme.primaryRed}}>X</span></h2></div>
                   
-                  {/* MOBILE ONLY USER INFO & LOGOUT (Inside Sidebar) */}
+                  {/* MOBILE USER BOX (With Profile Access) */}
                   <div className="mobile-user-box" style={{ padding: '0 24px 20px 24px', borderBottom: '1px solid #2D3139', marginBottom: '10px', display: 'none' }}>
                     <div style={{ fontSize: '14px', fontWeight: '700', color: 'white' }}>{userName}</div>
-                    <button onClick={handleLogout} style={{ marginTop: '10px', background: '#EF4444', color: 'white', border: 'none', padding: '8px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: '700', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                       <FontAwesomeIcon icon={faSignOutAlt} /> Logout Now
-                    </button>
+                    <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
+                      <button onClick={() => { setShowProfileModal(true); setIsSidebarOpen(false); }} style={{ background: 'rgba(255,255,255,0.1)', color: 'white', border: 'none', padding: '8px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: '700', cursor: 'pointer' }}>
+                         Profile
+                      </button>
+                      <button onClick={handleLogout} style={{ background: theme.danger, color: 'white', border: 'none', padding: '8px 12px', borderRadius: '6px', fontSize: '12px', fontWeight: '700', cursor: 'pointer' }}>
+                         Logout
+                      </button>
+                    </div>
                   </div>
 
                   <nav style={{ padding: '15px 0', flex: 1 }}>
@@ -154,7 +207,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
                       {isProfileOpen && (
                         <div className="profile-dropdown" style={{ position: 'absolute', top: '65px', right: '40px', width: '180px', backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)', border: `1px solid ${theme.border}`, zIndex: 1100, overflow: 'hidden' }}>
-                          <button style={{ width: '100%', padding: '12px 15px', textAlign: 'left', border: 'none', background: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: '600', color: theme.textDark, display: 'flex', alignItems: 'center', gap: '10px' }}><FontAwesomeIcon icon={faUserCircle} /> Profile</button>
+                          <button onClick={() => { setShowProfileModal(true); setIsProfileOpen(false); }} style={{ width: '100%', padding: '12px 15px', textAlign: 'left', border: 'none', background: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: '600', color: theme.textDark, display: 'flex', alignItems: 'center', gap: '10px' }}><FontAwesomeIcon icon={faUserCircle} /> View Profile</button>
                           <button onClick={handleLogout} style={{ width: '100%', padding: '12px 15px', textAlign: 'left', border: 'none', background: 'none', cursor: 'pointer', fontSize: '14px', fontWeight: '600', color: theme.danger, display: 'flex', alignItems: 'center', gap: '10px', borderTop: `1px solid ${theme.border}` }}><FontAwesomeIcon icon={faSignOutAlt} /> Log Out</button>
                         </div>
                       )}
